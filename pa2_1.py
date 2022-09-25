@@ -48,11 +48,19 @@ def main():
 
     print('KERAS modeling build starting...')
     ## Build your model here
+    model = Sequential(
+        [
+            layers.Dense(500, activation='relu')
+        ]
+    )
+    # add input layer
+    # h1
 
-    model = Sequential()
+    # h2
+    # add output layer
 ## save your model
-    model.save()
-    input_layer = Dense(32, )
+    #model.save()
+
 
 if __name__ == '__main__':
     main()
