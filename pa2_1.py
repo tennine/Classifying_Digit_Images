@@ -9,7 +9,7 @@ The argparse code in the template is a very efficient and clean way to pass para
 
 In this case, the code is intended to run from the command line in the following manner:
 
-python3 pa2Template.py --training_x MNISTXtrain.npy --training_y MNISTytrain.npy \
+python3 pa2Template.py --training_x MNISTXtrain1.npy --training_y MNISTytrain1.npy \
   --outModelFile nameofthemodel ...
 
   where nameofthemodel is the name you want to give to the h5 file.
@@ -68,29 +68,45 @@ def parseArguments():
 
     return parser.parse_args()
 
-
 def main():
     np.random.seed(1671)
     parms = parseArguments()
 
     X_train = np.load(parms.XFile)
     y_train = np.load(parms.yFile)
-    print(X_train)
     (X_train, y_train) = processTestData(X_train, y_train)
 
     print('KERAS modeling build starting...')
     ## Build your model here
 
+    # made the model
     model = Sequential(
         [
-            layers.Dense(500, activation='relu', name="input layer"),
+            layers.Dense(500, activation='relu', input_shape=(28, 28), name="input layer"),
             layers.Dense(500, activation='relu', name="h1 layer"),
-            layers.Dense(500, activation='sigmoid', name="h2 layer")
+            layers.Dense(1, activation='sigmoid', name="output layer")
         ]
     )
+    # sets up the model
+    model.compile(optimizer = 'adam', loss = 'keras.losses.SparseCategoricalCrossentropy()', metrics = ['keras.metrics.SparseCategoricalAccuracy()'])
+    #fits the model
+    model.fit(x=X_train, y=y_train, batch_size = 64, epochs=250)
+
+    #runs the model
+    x_test = np.load('MNIST_X_test_1.npy')
+    y_test = np.load('MNIST_Y_test_1.npy')
+    (X_test, y_test) = processTestData(x_test, y_test)
+
+
+    y_pred = model.predict(x_test)
+    prediction = np.array([x_test[0], y_pred[0]])
+    for y_point in range(len(y_pred)-1):
+        new_prediction = np.array([x_test[y_point+1], y_pred[y_point+1]])
+        prediction = np.stack([prediction, new_prediction])
+    np.save("model_1_prediction", prediction)
 
 ## save your model
-    #model.save()
+    model.save("m1")
 
 
 if __name__ == '__main__':
