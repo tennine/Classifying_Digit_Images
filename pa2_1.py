@@ -40,17 +40,16 @@ python3 pa2Template.py --training_x MNISTXtrain1.npy --training_y MNISTytrain1.n
 """
 
 import numpy as np
-import tensorflow as tp
+import tensorflow as tf
 from tensorflow import keras
 from keras import layers
 from keras.models import Sequential
 from keras.layers.core import Dense, Activation
-from keras.optimizers import SGD
 from keras.utils import np_utils
 from keras.models import load_model
 from keras import metrics
 
-
+print("help")
 from pa2pre1 import processTestData
 import argparse
 
@@ -86,13 +85,12 @@ def main():
     ## Build your model here
 
     # made the model
-    model = Sequential(
-        [
-            layers.Dense(500, activation='relu'),
-            layers.Dense(500, activation='relu'),
-            layers.Dense(10, activation='softmax')
-        ]
-    )
+    model = tf.keras.models.Sequential()
+
+    model.add(tf.keras.layers.Dense(units=500, activation = 'relu'))
+    model.add(tf.keras.layers.Dense(units=500, activation = 'relu'))
+    model.add(tf.keras.layers.Dense(units=10, activation = 'sigmoid'))
+
     # sets up the model
     model.compile(optimizer = keras.optimizers.RMSprop(), loss = keras.losses.CategoricalCrossentropy(), metrics = [keras.metrics.SparseCategoricalAccuracy()])
     #fits the model
