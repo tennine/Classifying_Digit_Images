@@ -4,10 +4,11 @@
 #    NOTE: Submit a different python file for each model
 # -------------------------------------------------
 
-'''
+"""
 The argparse code in the template is a very efficient and clean way to pass parameters to a python code.
 
 In this case, the code is intended to run from the command line in the following manner:
+
 
 python3 pa2Template.py --training_x MNISTXtrain1.npy --training_y MNISTytrain1.npy \
   --outModelFile nameofthemodel ...
@@ -36,9 +37,10 @@ python3 pa2Template.py --training_x MNISTXtrain1.npy --training_y MNISTytrain1.n
     PYTHON NOTEBOOK. IF YOU DO, THE TEST I WILL SUBJECT YOUR MODEL TO WILL FAIL AND YOU WILL LOSE 30 POINTS OF CREDIT.
 
     open the console from the tools menu and python console to run it
-'''
+"""
 
 import numpy as np
+import tensorflow as tp
 from tensorflow import keras
 from keras import layers
 from keras.models import Sequential
@@ -46,6 +48,8 @@ from keras.layers.core import Dense, Activation
 from keras.optimizers import SGD
 from keras.utils import np_utils
 from keras.models import load_model
+from keras import metrics
+
 
 from pa2pre1 import processTestData
 import argparse
@@ -70,10 +74,12 @@ def parseArguments():
 
 def main():
     np.random.seed(1671)
-    parms = parseArguments()
+   # parms = parseArguments()
 
-    X_train = np.load(parms.XFile)
-    y_train = np.load(parms.yFile)
+    #X_train = np.load(parms.XFile)
+    #y_train = np.load(parms.yFile)
+    X_train = np.load('MNISTXtrain1.npy')
+    y_train = np.load('MNISTytrain1.npy')
     (X_train, y_train) = processTestData(X_train, y_train)
 
     print('KERAS modeling build starting...')
@@ -82,15 +88,15 @@ def main():
     # made the model
     model = Sequential(
         [
-            layers.Dense(500, activation='relu', input_shape=(28, 28), name="input layer"),
-            layers.Dense(500, activation='relu', name="h1 layer"),
-            layers.Dense(1, activation='sigmoid', name="output layer")
+            layers.Dense(500, activation='relu'),
+            layers.Dense(500, activation='relu'),
+            layers.Dense(10, activation='softmax')
         ]
     )
     # sets up the model
-    model.compile(optimizer = 'adam', loss = 'keras.losses.SparseCategoricalCrossentropy()', metrics = ['keras.metrics.SparseCategoricalAccuracy()'])
+    model.compile(optimizer = keras.optimizers.RMSprop(), loss = keras.losses.CategoricalCrossentropy(), metrics = [keras.metrics.SparseCategoricalAccuracy()])
     #fits the model
-    model.fit(x=X_train, y=y_train, batch_size = 64, epochs=250)
+    model.fit(X_train, y_train, batch_size = 64, epochs=250)
 
     #runs the model
     x_test = np.load('MNIST_X_test_1.npy')
@@ -111,3 +117,39 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+'''
+model = Sequential()
+model.add(LSTM(64, activation='tanh', recurrent_activation='sigmoid', input_shape=(x_train.shape[1], x_train.shape[2]),
+               return_sequences=True))
+model.add(LSTM(256, activation='tanh', recurrent_activation='sigmoid', return_sequences=False))
+model.add(Dense(128))
+model.add(Dropout(0.2))
+model.add(Dense(y_train.shape[1]))
+model.compile(optimizer=Adam(learning_rate=0.0001), loss='mse', metrics=['accuracy'])
+model.summary()
+
+history = model.fit(x_train, y_train, epochs=20, batch_size=16, validation_split=0.2, verbose=1)
+
+import tensorflow as tf
+
+x_train = tf.random.normal((2066, 300, 2))
+y_train = tf.random.normal((2066, 60, 1))
+model = tf.keras.Sequential()
+model.add(tf.keras.layers.LSTM(64, activation='tanh', recurrent_activation='sigmoid', input_shape=(x_train.shape[1], x_train.shape[2]),
+               return_sequences=True))
+model.add(tf.keras.layers.LSTM(256, activation='tanh', recurrent_activation='sigmoid', return_sequences=False))
+model.add(tf.keras.layers.Dense(128))
+model.add(tf.keras.layers.Dropout(0.2))
+model.add(tf.keras.layers.Dense(y_train.shape[1]))
+model.add(tf.keras.layers.Reshape((y_train.shape[1], y_train.shape[2])))
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001), loss='mse', metrics=['accuracy'])
+model.summary()
+
+history = model.fit(x_train, y_train, epochs=1, batch_size=16, validation_split=0.2, verbose=1)
+Share
+Improve this answer
+Follow
+answered Feb 16 at 7:18
+'''
