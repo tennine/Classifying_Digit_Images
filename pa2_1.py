@@ -42,14 +42,8 @@ python3 pa2Template.py --training_x MNISTXtrain1.npy --training_y MNISTytrain1.n
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
-from keras import layers
-from keras.models import Sequential
-from keras.layers.core import Dense, Activation
-from keras.utils import np_utils
-from keras.models import load_model
-from keras import metrics
-
-print("help")
+import seaborn as sns
+import matplotlib.pylab as plt
 from pa2pre1 import processTestData
 import argparse
 
@@ -71,12 +65,13 @@ def parseArguments():
 
     return parser.parse_args()
 
+
 def main():
     np.random.seed(1671)
-   # parms = parseArguments()
+    # parms = parseArguments()
 
-    #X_train = np.load(parms.XFile)
-    #y_train = np.load(parms.yFile)
+    # X_train = np.load(parms.XFile)
+    # y_train = np.load(parms.yFile)
     X_train = np.load('MNISTXtrain1.npy')
     y_train = np.load('MNISTytrain1.npy')
     (X_train, y_train) = processTestData(X_train, y_train)
@@ -87,35 +82,37 @@ def main():
     # made the model
     model = tf.keras.models.Sequential()
 
-    model.add(tf.keras.layers.Dense(units=500, activation = 'relu'))
-    model.add(tf.keras.layers.Dense(units=500, activation = 'relu'))
-    model.add(tf.keras.layers.Dense(units=10, activation = 'sigmoid'))
+    model.add(tf.keras.layers.Dense(units=500, activation='relu'))
+    model.add(tf.keras.layers.Dense(units=500, activation='relu'))
+    model.add(tf.keras.layers.Dense(units=10, activation='sigmoid'))
 
     # sets up the model
-    model.compile(optimizer = keras.optimizers.RMSprop(), loss = keras.losses.CategoricalCrossentropy(), metrics = [keras.metrics.SparseCategoricalAccuracy()])
-    #fits the model
-    model.fit(X_train, y_train, batch_size = 64, epochs=250)
+    model.compile(optimizer=keras.optimizers.RMSprop(), loss=keras.losses.CategoricalCrossentropy(),
+                  metrics=[keras.metrics.CategoricalAccuracy()])
+    # fits the model
+    model.fit(X_train, y_train, batch_size=64, epochs=1, verbose=1)
 
-    #runs the model
+    # runs the model
     x_test = np.load('MNIST_X_test_1.npy')
     y_test = np.load('MNIST_Y_test_1.npy')
-    (X_test, y_test) = processTestData(x_test, y_test)
+    (x_test, y_test) = processTestData(x_test, y_test)
+    predict_y = model.predict(x_test)
+    print(predict_y[0])
 
+    #np.save('h1_predict_y',predict_y)
 
-    y_pred = model.predict(x_test)
-    prediction = np.array([x_test[0], y_pred[0]])
-    for y_point in range(len(y_pred)-1):
-        new_prediction = np.array([x_test[y_point+1], y_pred[y_point+1]])
-        prediction = np.stack([prediction, new_prediction])
-    np.save("model_1_prediction", prediction)
+   # sns.set()
+   # ax = sns.heatmap(predict_y, annot=True, fmt='.1f', linewidth=0.5)
+   # plt.xlabel('True Class')
+   # plt.ylabel('Predicted Class')
+   # plt.show()
 
-## save your model
-    model.save("m1")
+    ## save your model
+  #  model.save("m1")
 
 
 if __name__ == '__main__':
     main()
-
 
 '''
 model = Sequential()
