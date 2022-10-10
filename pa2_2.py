@@ -44,7 +44,7 @@ import tensorflow as tf
 from tensorflow import keras
 import seaborn as sns
 import matplotlib.pylab as plt
-from pa2pre1 import processTestData
+from pa2pre2 import processTestData
 import argparse
 
 
@@ -82,8 +82,8 @@ def main():
     # made the model
     model = tf.keras.models.Sequential()
 
-    model.add(tf.keras.layers.Dense(units=500, activation='relu'))
-    model.add(tf.keras.layers.Dense(units=500, activation='relu'))
+    model.add(tf.keras.layers.Dense(units=500, activation='relu', kerner_regularizer=keras.regularizers.L2()))
+    model.add(tf.keras.layers.Dense(units=500, activation='relu' , kernel_regularizer=keras.regularizers.L2()))
     model.add(tf.keras.layers.Dense(units=10, activation='sigmoid'))
 
     # sets up the model
@@ -105,6 +105,12 @@ def main():
     plt.ylabel('Predicted Class')
     plt.show()
     #np.save('h1_predict_y',predict_y)
+
+    #sns.set()
+    ax = sns.heatmap(predict_y, annot=True, fmt='.1f', linewidth=0.5)
+    #plt.xlabel('True Class')
+    #plt.ylabel('Predicted Class')
+    #plt.show()
 
     ## save your model
   #  model.save("m1")

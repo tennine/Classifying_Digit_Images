@@ -44,7 +44,7 @@ import tensorflow as tf
 from tensorflow import keras
 import seaborn as sns
 import matplotlib.pylab as plt
-from pa2pre1 import processTestData
+from pa2pre4 import processTestData
 import argparse
 
 
@@ -90,7 +90,7 @@ def main():
     model.compile(optimizer=keras.optimizers.RMSprop(), loss=keras.losses.CategoricalCrossentropy(),
                   metrics=[keras.metrics.CategoricalAccuracy()])
     # fits the model
-    model.fit(X_train, y_train, batch_size=64, epochs=1, verbose=1)
+    model.fit(X_train, y_train, batch_size=64, epochs=1, verbose=1, callbacks=[keras.callbacks.EarlyStopping(monitor='loss', patience=2)])
 
     # runs the model
     x_test = np.load('MNIST_X_test_1.npy')
@@ -105,6 +105,12 @@ def main():
     plt.ylabel('Predicted Class')
     plt.show()
     #np.save('h1_predict_y',predict_y)
+
+    #sns.set()
+    ax = sns.heatmap(predict_y, annot=True, fmt='.1f', linewidth=0.5)
+    #plt.xlabel('True Class')
+    #plt.ylabel('Predicted Class')
+    #plt.show()
 
     ## save your model
   #  model.save("m1")
